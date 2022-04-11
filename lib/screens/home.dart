@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:message/screens/widget/messege_line.dart';
+import 'package:message/widget/messege_line.dart';
 
 final _firestor = FirebaseFirestore.instance;
 late User singInUser;
@@ -27,14 +27,6 @@ class _homeState extends State<home> {
       print(e);
     }
   }
-
-  // void getMessages() async {
-  //   await _firestor.collection('messages').snapshots().forEach((element) {
-  //     element.docs.forEach((e) {
-  //       print(e.data());
-  //     });
-  //   });
-  // }
 
   @override
   void initState() {
@@ -135,22 +127,20 @@ class MessageStreamBuilder extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          snapshot.data!.docs.reversed.forEach((element) {
-            final text = element.get('text');
-            final sender = element.get('sender');
-            final currentUser = singInUser.email;
-            final messageWidget = MessageLine(
-              sender: sender,
-              text: text,
-              isMe: sender == currentUser,
-            );
-            messagesWidgets.add(messageWidget);
-          });
           return Expanded(
-            child: ListView(
+            child: ListView.builder(
               reverse: true,
+              itemCount: snapshot.data!.docs.length,
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              children: messagesWidgets,
+              itemBuilder: (context, index) {
+                final currentUser = singInUser.email;
+                DocumentSnapshot message = snapshot.data!.docs[index];
+                return MessageLine(
+                  sender: message['sender'],
+                  text: message['text'],
+                  isMe: message['sender'] == currentUser,
+                );
+              },
             ),
           );
         });
