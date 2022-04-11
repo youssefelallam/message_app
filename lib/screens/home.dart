@@ -121,7 +121,6 @@ class MessageStreamBuilder extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
         stream: _firestor.collection('messages').orderBy('time').snapshots(),
         builder: (context, snapshot) {
-          List<MessageLine> messagesWidgets = [];
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(),
